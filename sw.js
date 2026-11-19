@@ -2,7 +2,7 @@
 // The page itself is fetched fresh from the network whenever you're online,
 // so new versions appear right away; the saved copy is used only when offline.
 // Bump VERSION whenever you change the app.
-const VERSION = 'gubby-v6';
+const VERSION = 'gubby-v7';
 const SHELL = [
   './',
   './index.html',

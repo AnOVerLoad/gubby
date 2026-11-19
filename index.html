@@ -390,6 +390,10 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
       Import from CSV
     </button>
+    <button class="menu-item" id="soundBtn" aria-pressed="true">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      <span id="soundLabel">Gubby sounds: On</span>
+    </button>
     <button class="menu-item" id="menuClose" style="justify-content:center;color:var(--sub)">Close</button>
   </div>
   <p class="menu-note">Your data stays on this iPhone. Export a backup now and then.<br>Gubby <span id="appVersion"></span></p>
@@ -444,6 +448,7 @@
   const fmt = (n) => n.toFixed(2);
   const round2 = (n) => Math.round(n * 100) / 100;
   const startOfDay = (t) => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+  const startOfMinute = (t) => t - (t % 60000);
   const pad2 = (n) => String(n).padStart(2, '0');
   const dateVal = (t) => { const d = new Date(t); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; };
   const timeVal = (t) => { const d = new Date(t); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
@@ -634,11 +639,13 @@
   function sheetTs() {
     const [y, m, d] = ($('dateIn').value || dateVal(Date.now())).split('-').map(Number);
     const [hh, mm] = ($('timeIn').value || timeVal(Date.now())).split(':').map(Number);
-    return new Date(y, m - 1, d, hh, mm).getTime();
+    const t = new Date(y, m - 1, d, hh, mm).getTime();
+    const now = Date.now();
+    return !editing && t === startOfMinute(now) ? now : t;
   }
   function updateEntry() {
     const ts = sheetTs();
-    const prev = entries.filter((e) => e.ts < ts && (!editing || e.id !== editing.id)).pop();
+    const prev = entries.filter((e) => e.ts <= ts && (!editing || e.id !== editing.id)).pop();
     const num = $('readNum');
     if (buf) { num.textContent = buf; num.classList.remove('placeholder'); }
     else { num.textContent = prev ? fmt(prev.kg) : '0.00'; num.classList.add('placeholder'); }
@@ -689,9 +696,10 @@
   $('cancelBtn').addEventListener('click', closeSheet);
   $('addBtn').addEventListener('click', () => openEntry(null));
   $('saveBtn').addEventListener('click', async () => {
+    if (!editing) audio();
     const entry = { id: editing ? editing.id : (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()), ts: sheetTs(), kg: round2(parseFloat(buf)) };
     const isNew = !editing;
-    const prevEntry = entries.filter((e) => e.ts < entry.ts && e.id !== entry.id).pop();
+    const prevEntry = entries.filter((e) => e.ts <= entry.ts && e.id !== entry.id).pop();
     await putEntry(entry);
     closeSheet(); await load();
     if (isNew) showCheer(prevEntry ? round2(entry.kg - prevEntry.kg) : null);
@@ -707,6 +715,76 @@
     closeSheet(); await load(); toast('Entry deleted');
   });
 
+
+
+  // ---------- Gubby's sounds (synthesised, no audio files) ----------
+  let soundOn = true;
+  try { soundOn = localStorage.getItem('sound') !== 'off'; } catch (e) {}
+  let actx = null;
+  function audio() {
+    if (!soundOn) return null;
+    try {
+      if (!actx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        // 'ambient' lets the iPhone's silent switch mute Gubby where supported
+        if (navigator.audioSession) navigator.audioSession.type = 'ambient';
+        actx = new AC();
+      }
+      if (actx.state === 'suspended') actx.resume();
+      return actx;
+    } catch (e) { return null; }
+  }
+  function tone(ctx, t0, f1, f2, dur, type = 'sine', vol = 0.18, vibrato = 0) {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(f1, t0);
+    o.frequency.exponentialRampToValueAtTime(f2, t0 + dur * 0.9);
+    if (vibrato) {
+      const l = ctx.createOscillator(), lg = ctx.createGain();
+      l.frequency.value = 9; lg.gain.value = vibrato;
+      l.connect(lg); lg.connect(o.frequency); l.start(t0); l.stop(t0 + dur);
+    }
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(t0); o.stop(t0 + dur + 0.02);
+  }
+  const SOUNDS = {
+    // "wink wink" + sparkle
+    wink(ctx, t) {
+      tone(ctx, t, 1100, 1750, 0.11, 'triangle', 0.16);
+      tone(ctx, t + 0.16, 1100, 1750, 0.11, 'triangle', 0.16);
+      [2637, 3136, 3520].forEach((f, i) => tone(ctx, t + 0.34 + i * 0.07, f, f, 0.28, 'sine', 0.07));
+    },
+    // "oop-sss": a little bounce up, then a wobbly slide down
+    oops(ctx, t) {
+      tone(ctx, t, 420, 640, 0.12, 'triangle', 0.17);
+      tone(ctx, t + 0.17, 760, 260, 0.5, 'sine', 0.15, 18);
+    },
+    // two soft, calm notes
+    steady(ctx, t) {
+      tone(ctx, t, 880, 880, 0.25, 'sine', 0.12);
+      tone(ctx, t + 0.2, 1175, 1175, 0.35, 'sine', 0.1);
+    }
+  };
+  function playSound(name) {
+    const ctx = audio();
+    if (!ctx || !SOUNDS[name]) return;
+    try { SOUNDS[name](ctx, ctx.currentTime + 0.05); } catch (e) {}
+  }
+  function renderSoundBtn() {
+    $('soundLabel').textContent = `Gubby sounds: ${soundOn ? 'On' : 'Off'}`;
+    $('soundBtn').setAttribute('aria-pressed', String(soundOn));
+  }
+  $('soundBtn').addEventListener('click', () => {
+    soundOn = !soundOn;
+    try { localStorage.setItem('sound', soundOn ? 'on' : 'off'); } catch (e) {}
+    renderSoundBtn();
+    if (soundOn) playSound('wink');
+  });
+  renderSoundBtn();
 
   // ---------- Cheer-up pop-up ----------
   const CHEERS = {
@@ -872,6 +950,7 @@
     const mood = diff === null ? 'first' : diff < 0 ? 'celebrate' : diff > 0 ? 'cheer' : 'steady';
     const [title, text, pose] = force !== undefined ? CHEERS[mood][force] : pick(CHEERS[mood], mood);
     $('cheerArt').innerHTML = gubbySVG(pose);
+    playSound(mood === 'cheer' ? 'oops' : mood === 'steady' ? 'steady' : 'wink');
     $('cheerTitle').textContent = title;
     $('cheerText').textContent = text;
     const pill = $('cheerDiff');
@@ -942,7 +1021,7 @@
 
   // ---------- Offline ----------
   // ---------- Offline + automatic updates ----------
-  const APP_VERSION = 'v6';
+  const APP_VERSION = 'v7';
   $('appVersion').textContent = APP_VERSION;
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     const hadController = !!navigator.serviceWorker.controller;
