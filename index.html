@@ -574,7 +574,11 @@
     inp.addEventListener('input', updateEntry);
     inp.addEventListener('change', updateEntry);
     // Open the native picker when the chip is tapped (where the browser supports it)
-    inp.closest('.chip').addEventListener('click', () => {
+    // Tapping the chip's icon or padding opens the picker. Clicks on the field
+    // itself are left alone, so the hour and minute parts can each be edited.
+    inp.closest('.chip').addEventListener('click', (e) => {
+      if (e.target === inp) return;
+      e.preventDefault();
       inp.focus();
       try { if (inp.showPicker) inp.showPicker(); } catch (err) {}
     });
