@@ -147,7 +147,15 @@
     display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 500;
   }
   .chip svg { color: var(--tint-text); }
-  .chip input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; font-size: 16px; }
+  .chip input {
+    -webkit-appearance: none; appearance: none; border: 0; background: transparent; color: var(--text);
+    font: inherit; font-size: 16px; font-weight: 500; padding: 0; margin: 0; height: 44px; min-width: 0;
+    text-align: center; cursor: pointer; outline: none;
+  }
+  #dateIn { width: 8.6em; } #timeIn { width: 6.4em; }
+  .chip input::-webkit-date-and-time-value { text-align: center; }
+  .chip input::-webkit-calendar-picker-indicator { display: none; }
+  .chip:focus-within { box-shadow: 0 0 0 2px var(--accent); }
 
   .readout { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 6px 0; }
   .readout .big .num { font-size: 82px; }
@@ -256,12 +264,10 @@
   <div class="chips">
     <label class="chip">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18"/><path d="M8 3v4"/><path d="M16 3v4"/></svg>
-      <span id="dateText"></span>
       <input type="date" id="dateIn" aria-label="Date">
     </label>
     <label class="chip">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-      <span id="timeText"></span>
       <input type="time" id="timeIn" aria-label="Time">
     </label>
   </div>
@@ -529,8 +535,6 @@
   }
   function updateEntry() {
     const ts = sheetTs();
-    $('dateText').textContent = dayLabel(ts) === 'Today' ? `Today, ${shortDate(ts)}` : dayLabel(ts);
-    $('timeText').textContent = $('timeIn').value || timeVal(Date.now());
     const prev = entries.filter((e) => e.ts < ts && (!editing || e.id !== editing.id)).pop();
     const num = $('readNum');
     if (buf) { num.textContent = buf; num.classList.remove('placeholder'); }
@@ -565,8 +569,16 @@
     else if (e.key === 'Enter' && !$('saveBtn').disabled) $('saveBtn').click();
     else if (e.key === 'Escape') closeSheet();
   });
-  $('dateIn').addEventListener('change', updateEntry);
-  $('timeIn').addEventListener('change', updateEntry);
+  for (const id of ['dateIn', 'timeIn']) {
+    const inp = $(id);
+    inp.addEventListener('input', updateEntry);
+    inp.addEventListener('change', updateEntry);
+    // Open the native picker when the chip is tapped (where the browser supports it)
+    inp.closest('.chip').addEventListener('click', () => {
+      inp.focus();
+      try { if (inp.showPicker) inp.showPicker(); } catch (err) {}
+    });
+  }
   $('cancelBtn').addEventListener('click', closeSheet);
   $('addBtn').addEventListener('click', () => openEntry(null));
   $('saveBtn').addEventListener('click', async () => {
