@@ -1,6 +1,6 @@
 // Offline support: serve the app from cache, refresh it in the background.
 // Bump VERSION whenever you change the app so phones pick up the update.
-const VERSION = 'gubby-v3';
+const VERSION = 'gubby-v5';
 const SHELL = [
   './',
   './index.html',

@@ -183,6 +183,98 @@
     background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 15px; font-weight: 500;
   }
   .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ---------- Cheer-up pop-up ---------- */
+  .cheer { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
+    background: var(--scrim); opacity: 0; transition: opacity .25s; padding: 24px; }
+  .cheer.on { opacity: 1; }
+  .cheer-card { overflow: hidden; width: min(340px, 100%); background: var(--bg); border-radius: 28px; padding: 16px 24px 24px;
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px;
+    transform: scale(.85) translateY(24px); transition: transform .45s cubic-bezier(.2,1.4,.4,1); }
+  .cheer.on .cheer-card { transform: none; }
+  .cheer-art svg { width: 190px; height: 190px; overflow: visible; display: block; }
+  .cheer h2 { margin: 0; font-size: 27px; font-weight: 700; letter-spacing: -0.01em; }
+  .cheer p { margin: 0; font-size: 17px; color: var(--sub); line-height: 1.4; }
+  .cheer .pill { margin-top: 6px; }
+  .cheer .primary { margin-top: 14px; width: 100%; }
+
+  /* Gubby's moves */
+  .cheer-art svg * { transform-box: view-box; }
+  .cheer-art svg .fb { transform-box: fill-box; transform-origin: center; }
+  .g-sprout { transform-origin: 100px 58px; animation: g-wiggle 1.2s ease-in-out infinite; }
+  .g-confetti { animation: g-fall 1.8s linear infinite; opacity: 0; }
+  .g-spark { animation: g-twinkle 1.4s ease-in-out infinite; }
+  .g-heart { animation: g-float 2.4s ease-out infinite; }
+  .g-note { animation: g-float 2s ease-out infinite; }
+  .g-z { animation: g-float 2.6s ease-out infinite; }
+  /* 1 jump */
+  .pose-jump .g-body { transform-origin: 100px 184px; animation: g-jump .9s ease-in-out infinite; }
+  .pose-jump .g-shadow { transform-origin: 100px 186px; animation: g-shadow .9s ease-in-out infinite; }
+  .pose-jump .g-armL { transform-origin: 40px 112px; animation: g-waveL .45s ease-in-out infinite alternate; }
+  .pose-jump .g-armR { transform-origin: 160px 112px; animation: g-waveR .45s ease-in-out infinite alternate; }
+  /* 2 thumbs-up + wink */
+  .pose-thumbs .g-body { transform-origin: 100px 184px; animation: g-bob 1.2s ease-in-out infinite; }
+  .pose-thumbs .g-thumb { transform-origin: 158px 120px; animation: g-thumb .6s ease-in-out infinite alternate; }
+  /* 3 run */
+  .pose-run .g-body { transform-origin: 100px 184px; animation: g-run .32s ease-in-out infinite alternate; }
+  .pose-run .g-armL { transform-origin: 42px 118px; animation: g-swing .32s ease-in-out infinite alternate; }
+  .pose-run .g-armR { transform-origin: 158px 118px; animation: g-swing .32s ease-in-out infinite alternate-reverse; }
+  .pose-run .g-footL { animation: g-step .32s ease-in-out infinite alternate; }
+  .pose-run .g-footR { animation: g-step .32s ease-in-out infinite alternate-reverse; }
+  .g-speed { animation: g-dash .5s linear infinite; }
+  /* 4 dance */
+  .pose-dance .g-body { transform-origin: 100px 184px; animation: g-dance 1s ease-in-out infinite; }
+  .pose-dance .g-armL { transform-origin: 40px 112px; animation: g-waveL .5s ease-in-out infinite alternate; }
+  .pose-dance .g-armR { transform-origin: 160px 112px; animation: g-waveL .5s ease-in-out infinite alternate-reverse; }
+  /* 5 twirl */
+  .pose-twirl .g-body { transform-origin: 100px 120px; animation: g-twirl 2.2s ease-in-out infinite; }
+  /* 6 fist pump */
+  .pose-pump .g-body { transform-origin: 100px 184px; animation: g-bob 1.4s ease-in-out infinite; }
+  .pose-pump .g-pump { transform-origin: 162px 112px; animation: g-pump .7s ease-in-out infinite; }
+  /* 7 sunrise */
+  .pose-sunrise .g-body { transform-origin: 100px 184px; animation: g-nod 1.6s ease-in-out infinite; }
+  .g-sun { animation: g-rise 3s ease-out infinite; }
+  .g-rays { transform-origin: 160px 64px; animation: g-spin 6s linear infinite; }
+  /* 8 hug */
+  .pose-hug .g-body { transform-origin: 100px 184px; animation: g-squeeze 1.2s ease-in-out infinite; }
+  .g-bigheart { transform-origin: 100px 146px; animation: g-pulse 1.2s ease-in-out infinite; }
+  /* 9 chart */
+  .pose-chart .g-body { transform-origin: 100px 184px; animation: g-bob 1.6s ease-in-out infinite; }
+  .pose-chart .g-point { transform-origin: 42px 112px; animation: g-poke .5s ease-in-out infinite alternate; }
+  .g-trend { stroke-dasharray: 120; animation: g-draw 2.6s ease-in-out infinite; }
+  /* 10 sleepy */
+  .pose-sleepy .g-body { transform-origin: 100px 184px; animation: g-breathe 3s ease-in-out infinite; }
+  .pose-sleepy .g-sprout { animation-duration: 3s; }
+  /* same weight */
+  .pose-steady .g-body { transform-origin: 100px 184px; animation: g-sway 2.4s ease-in-out infinite; }
+
+  @keyframes g-wiggle { 0%,100% { transform: rotate(-8deg); } 50% { transform: rotate(8deg); } }
+  @keyframes g-jump { 0%,100% { transform: translateY(0) scale(1.05,.95); } 45% { transform: translateY(-18px) scale(.97,1.03); } }
+  @keyframes g-shadow { 0%,100% { transform: scale(1); } 45% { transform: scale(.72); opacity: .6; } }
+  @keyframes g-waveL { from { transform: rotate(-14deg); } to { transform: rotate(16deg); } }
+  @keyframes g-waveR { from { transform: rotate(14deg); } to { transform: rotate(-16deg); } }
+  @keyframes g-fall { 0% { transform: translateY(-20px) rotate(0); opacity: 0; } 12% { opacity: 1; } 100% { transform: translateY(160px) rotate(320deg); opacity: 0; } }
+  @keyframes g-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes g-pump { 0%,100% { transform: rotate(10deg); } 50% { transform: rotate(-16deg); } }
+  @keyframes g-twinkle { 0%,100% { transform: scale(.3); opacity: 0; } 50% { transform: scale(1); opacity: 1; } }
+  @keyframes g-sway { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+  @keyframes g-float { 0% { transform: translateY(12px) scale(.6); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(-34px) scale(1); opacity: 0; } }
+  @keyframes g-thumb { from { transform: rotate(4deg); } to { transform: rotate(-10deg); } }
+  @keyframes g-run { from { transform: translateY(0) rotate(6deg); } to { transform: translateY(-7px) rotate(6deg); } }
+  @keyframes g-swing { from { transform: rotate(-35deg); } to { transform: rotate(35deg); } }
+  @keyframes g-step { from { transform: translateY(0); } to { transform: translateY(-9px); } }
+  @keyframes g-dash { 0% { transform: translateX(10px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateX(-18px); opacity: 0; } }
+  @keyframes g-dance { 0%,100% { transform: rotate(-9deg) translateY(0); } 25% { transform: rotate(0) translateY(-12px); } 50% { transform: rotate(9deg) translateY(0); } 75% { transform: rotate(0) translateY(-12px); } }
+  @keyframes g-twirl { 0% { transform: scaleX(1); } 25% { transform: scaleX(-1); } 50%,100% { transform: scaleX(1); } }
+  @keyframes g-nod { 0%,60%,100% { transform: rotate(0) translateY(0); } 30% { transform: rotate(3deg) translateY(2px); } }
+  @keyframes g-rise { 0% { transform: translateY(26px); opacity: 0; } 40%,100% { transform: translateY(0); opacity: 1; } }
+  @keyframes g-spin { to { transform: rotate(360deg); } }
+  @keyframes g-squeeze { 0%,100% { transform: scale(1); } 50% { transform: scale(1.04,.96); } }
+  @keyframes g-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+  @keyframes g-poke { from { transform: rotate(0); } to { transform: rotate(-10deg); } }
+  @keyframes g-draw { 0% { stroke-dashoffset: 120; } 60%,100% { stroke-dashoffset: 0; } }
+  @keyframes g-breathe { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03,.97); } }
+  @media (prefers-reduced-motion: reduce) { .cheer-art * { animation: none !important; } .g-confetti, .g-spark, .g-heart, .g-note, .g-z { opacity: 1; } .g-trend { stroke-dashoffset: 0; } }
 </style>
 </head>
 <body>
@@ -303,6 +395,16 @@
   <p class="menu-note">Your data stays on this iPhone. Export a backup now and then.</p>
   <input type="file" id="fileIn" accept=".csv,text/csv" hidden>
 </section>
+
+<div class="cheer" id="cheer" role="dialog" aria-modal="true" aria-labelledby="cheerTitle" hidden>
+  <div class="cheer-card">
+    <div class="cheer-art" id="cheerArt" aria-hidden="true"></div>
+    <h2 id="cheerTitle"></h2>
+    <p id="cheerText"></p>
+    <span class="pill neutral" id="cheerDiff"></span>
+    <button class="primary" id="cheerBtn">Thanks, Gubby</button>
+  </div>
+</div>
 
 <div class="toast" id="toast" role="status"></div>
 
@@ -587,9 +689,12 @@
   $('addBtn').addEventListener('click', () => openEntry(null));
   $('saveBtn').addEventListener('click', async () => {
     const entry = { id: editing ? editing.id : (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()), ts: sheetTs(), kg: Math.round(parseFloat(buf) * 10) / 10 };
+    const isNew = !editing;
+    const prevEntry = entries.filter((e) => e.ts < entry.ts && e.id !== entry.id).pop();
     await putEntry(entry);
     closeSheet(); await load();
-    toast(editing ? 'Entry updated' : 'Saved');
+    if (isNew) showCheer(prevEntry ? Math.round((entry.kg - prevEntry.kg) * 10) / 10 : null);
+    else toast('Entry updated');
   });
   $('deleteBtn').addEventListener('click', async () => {
     if (!armedDelete) {
@@ -600,6 +705,192 @@
     await delEntry(editing.id);
     closeSheet(); await load(); toast('Entry deleted');
   });
+
+
+  // ---------- Cheer-up pop-up ----------
+  const CHEERS = {
+    celebrate: [
+      ['Congratulations!', 'You’re getting lighter, and Gubby is so proud of you.', 'jump'],
+      ['Well done!', 'Every small step adds up, and this one counts.', 'thumbs'],
+      ['Look at you go!', 'Your hard work is showing.', 'run'],
+      ['Yay, progress!', 'Gubby is doing a happy dance for you.', 'dance'],
+      ['Amazing!', 'Keep it up — you’re on the right track.', 'twirl']
+    ],
+    cheer: [
+      ['You can do it!', 'One number doesn’t define your journey.', 'pump'],
+      ['Keep your head up!', 'Tomorrow is a fresh start.', 'sunrise'],
+      ['Don’t give up!', 'Gubby believes in you.', 'hug'],
+      ['Small bump, big picture.', 'Look at your trend line, not just today.', 'chart'],
+      ['Try again tomorrow!', 'Progress is never a straight line.', 'sleepy']
+    ],
+    steady: [['Holding steady!', 'Consistency is a win too.', 'steady']],
+    first: [['First step done!', 'Gubby will cheer you on every day from now on.', 'jump']]
+  };
+
+  // ---------- Gubby, drawn in SVG ----------
+  const PINK = '#F2A9C0', INK = '#2A1F25', BERRY = '#B04A6E', ROSE = '#D9789A', MAUVE = '#E8A0B8', GOLD = '#F5C26B';
+  const STAR = 'M0 -8 L2.2 -2.2 L8 0 L2.2 2.2 L0 8 L-2.2 2.2 L-8 0 L-2.2 -2.2Z';
+  const HEART = 'M0 4 C0 -1 7 -2 8 3 C9 -2 16 -1 16 4 C16 9 8 13 8 15 C8 13 0 9 0 4Z';
+  const arm = (x1, y1, x2, y2, cls = '') =>
+    `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${PINK}" stroke-width="17" stroke-linecap="round"/>`;
+  const restArms = arm(38, 124, 28, 144) + arm(162, 124, 172, 144);
+  const at = (x, y, inner, scale = 1) => `<g transform="translate(${x} ${y}) scale(${scale})">${inner}</g>`;
+  const delay = (d) => `style="animation-delay:${d}s"`;
+  const eyes = (dx = 0, dy = 0) => `<ellipse cx="${80 + dx}" cy="${112 + dy}" rx="6" ry="7.5" fill="${INK}"/><ellipse cx="${120 + dx}" cy="${112 + dy}" rx="6" ry="7.5" fill="${INK}"/>
+      <circle cx="${82.5 + dx}" cy="${108.5 + dy}" r="2.2" fill="#fff"/><circle cx="${122.5 + dx}" cy="${108.5 + dy}" r="2.2" fill="#fff"/>`;
+  const happyEyes = `<path d="M71 113 q9 -11 18 0 M111 113 q9 -11 18 0" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+  const smile = `<path d="M92 126 q8 6 16 0" stroke="${INK}" stroke-width="4.5" fill="none" stroke-linecap="round"/>`;
+  const openSmile = `<path d="M89 124 q11 16 22 0 z" fill="#9A3A5C"/>`;
+  const sparks = (pts) => pts.map(([x, y, sc, d, c]) => at(x, y, `<path class="g-spark fb" d="${STAR}" fill="${c}" ${delay(d)}/>`, sc)).join('');
+
+  const POSES = {
+    jump() {
+      const bits = [[30, BERRY, 0, 'r'], [60, ROSE, .5, 'c'], [92, MAUVE, 1.1, 'r'], [118, BERRY, .3, 'c'], [146, ROSE, .9, 'r'], [172, MAUVE, 1.4, 'c'], [46, '#C9668A', 1.3, 'c'], [160, '#C9668A', .7, 'r']];
+      return {
+        arms: arm(42, 112, 20, 78, 'g-armL') + arm(158, 112, 180, 78, 'g-armR'),
+        face: happyEyes + openSmile,
+        fx: bits.map(([x, c, d, k]) => k === 'r'
+          ? `<rect class="g-confetti fb" x="${x}" y="10" width="7" height="11" rx="2" fill="${c}" ${delay(d)}/>`
+          : `<circle class="g-confetti fb" cx="${x}" cy="14" r="4.5" fill="${c}" ${delay(d)}/>`).join('')
+      };
+    },
+    thumbs() {
+      return {
+        arms: arm(38, 124, 28, 144),
+        front: `<g class="g-thumb">${arm(150, 128, 176, 104)}<circle cx="180" cy="100" r="12" fill="${PINK}"/>
+          <line x1="180" y1="92" x2="180" y2="76" stroke="${PINK}" stroke-width="10" stroke-linecap="round"/></g>`,
+        face: `<path d="M71 113 q9 -11 18 0" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="120" cy="112" rx="6" ry="7.5" fill="${INK}"/><circle cx="122.5" cy="108.5" r="2.2" fill="#fff"/>` + openSmile,
+        fx: sparks([[196, 70, 1, 0, BERRY], [168, 62, .6, .6, ROSE]])
+      };
+    },
+    run() {
+      return {
+        arms: arm(42, 118, 30, 146, 'g-armL') + arm(158, 118, 170, 146, 'g-armR'),
+        face: eyes(4, 0) + openSmile,
+        fx: [100, 120, 140].map((y, i) => `<line class="g-speed fb" x1="2" y1="${y}" x2="${i === 1 ? 26 : 18}" y2="${y}" stroke="${MAUVE}" stroke-width="5" stroke-linecap="round" ${delay(i * .15)}/>`).join('')
+      };
+    },
+    dance() {
+      const note = `<ellipse cx="0" cy="10" rx="5.5" ry="4.2" fill="${BERRY}"/><line x1="5" y1="10" x2="5" y2="-7" stroke="${BERRY}" stroke-width="2.5"/><path d="M5 -7 q7 2 7 9" stroke="${BERRY}" stroke-width="2.5" fill="none"/>`;
+      return {
+        arms: arm(42, 112, 18, 84, 'g-armL') + arm(158, 112, 182, 84, 'g-armR'),
+        face: happyEyes + openSmile,
+        fx: at(28, 40, `<g class="g-note fb">${note}</g>`) + at(172, 34, `<g class="g-note fb" ${delay(.7)}>${note}</g>`, .8) + at(150, 18, `<g class="g-note fb" ${delay(1.3)}>${note}</g>`, .7)
+      };
+    },
+    twirl() {
+      const starEye = (x) => at(x, 112, `<path d="M0 -9 L2.6 -2.6 L9 0 L2.6 2.6 L0 9 L-2.6 2.6 L-9 0 L-2.6 -2.6Z" fill="${BERRY}"/>`);
+      return {
+        arms: arm(40, 118, 14, 108) + arm(160, 118, 186, 108),
+        face: starEye(80) + starEye(120) + openSmile,
+        fx: sparks([[24, 50, 1, 0, BERRY], [180, 44, .9, .5, ROSE], [190, 130, .7, .9, MAUVE], [12, 140, .7, 1.2, ROSE], [100, 18, .6, .3, BERRY]])
+      };
+    },
+    pump() {
+      return {
+        arms: arm(38, 124, 26, 142) + `<g class="g-pump">${arm(160, 112, 182, 80)}<circle cx="183" cy="77" r="11" fill="${PINK}"/></g>`,
+        face: eyes() + `<path d="M71 100 l14 2.5 M129 100 l-14 2.5" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/>` + smile,
+        fx: sparks([[196, 54, 1, 0, BERRY], [166, 46, .7, .5, ROSE], [200, 92, .6, .9, MAUVE]])
+      };
+    },
+    sunrise() {
+      const rays = [0, 45, 90, 135, 180, 225, 270, 315].map((a) => `<line x1="160" y1="40" x2="160" y2="32" stroke="${GOLD}" stroke-width="4" stroke-linecap="round" transform="rotate(${a} 160 64)"/>`).join('');
+      return {
+        back: `<g class="g-sun fb"><g class="g-rays">${rays}</g><circle cx="160" cy="64" r="17" fill="${GOLD}"/></g>`,
+        arms: restArms,
+        face: eyes(5, -5) + smile
+      };
+    },
+    hug() {
+      return {
+        arms: '',
+        front: `<path class="g-bigheart" d="M100 160 C78 146 72 132 82 124 C90 118 98 122 100 130 C102 122 110 118 118 124 C128 132 122 146 100 160Z" fill="${BERRY}"/>
+          ${arm(46, 124, 80, 146)}${arm(154, 124, 120, 146)}`,
+        face: happyEyes + smile,
+        fx: at(150, 44, `<path class="g-heart fb" d="${HEART}" fill="${ROSE}"/>`) + at(34, 56, `<path class="g-heart fb" d="${HEART}" fill="${MAUVE}" ${delay(1.2)}/>`, .7)
+      };
+    },
+    chart() {
+      return {
+        back: `<rect x="-36" y="22" width="76" height="54" rx="12" fill="#FFFFFF" stroke="#EEDFE0" stroke-width="2"/>
+          <polyline class="g-trend" points="-26,36 -15,46 -5,40 6,54 17,50 30,64" fill="none" stroke="${ROSE}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="30" cy="64" r="4" fill="${BERRY}"/>`,
+        arms: arm(162, 124, 172, 144) + `<g class="g-point">${arm(42, 112, 22, 88)}<circle cx="19" cy="84" r="10" fill="${PINK}"/></g>`,
+        face: eyes(-5, -3) + smile
+      };
+    },
+    sleepy() {
+      const z = (x, y, sz, d) => `<text class="g-z fb" x="${x}" y="${y}" font-size="${sz}" font-weight="700" fill="${BERRY}" font-family="-apple-system, system-ui, sans-serif" ${delay(d)}>z</text>`;
+      return {
+        arms: restArms,
+        face: `<path d="M72 113 q8 6 16 0 M112 113 q8 6 16 0" stroke="${INK}" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="100" cy="129" rx="4.5" ry="5.5" fill="#9A3A5C"/>`,
+        fx: at(176, 34, `<path d="M0 -15 a15 15 0 1 0 13 22 a12 12 0 1 1 -13 -22z" fill="${GOLD}"/>`) +
+          z(142, 62, 22, 0) + z(158, 44, 16, .9) + z(128, 40, 13, 1.7)
+      };
+    },
+    steady() {
+      return {
+        arms: restArms,
+        face: eyes() + smile,
+        fx: at(150, 40, `<path class="g-heart fb" d="${HEART}" fill="${ROSE}"/>`) + at(36, 54, `<path class="g-heart fb" d="${HEART}" fill="${MAUVE}" ${delay(1.2)}/>`, .7)
+      };
+    }
+  };
+
+  function gubbySVG(pose) {
+    const p = (POSES[pose] || POSES.steady)();
+    return `<svg viewBox="0 0 200 200" class="pose-${pose}">
+      <ellipse class="g-shadow" cx="100" cy="186" rx="54" ry="7" fill="#EBC6D3" opacity=".8"/>
+      ${p.back || ''}
+      <g class="g-body">
+        <ellipse class="g-footL fb" cx="76" cy="176" rx="20" ry="10" fill="#E896B0"/><ellipse class="g-footR fb" cx="124" cy="176" rx="20" ry="10" fill="#E896B0"/>
+        ${p.arms || ''}
+        <ellipse cx="100" cy="118" rx="68" ry="62" fill="${PINK}"/>
+        <ellipse cx="100" cy="112" rx="62" ry="55" fill="#F5B7CA"/>
+        <g class="g-sprout"><line x1="100" y1="58" x2="100" y2="43" stroke="${BERRY}" stroke-width="5" stroke-linecap="round"/>
+          <ellipse cx="88" cy="41" rx="13" ry="6" fill="${BERRY}" transform="rotate(-20 88 41)"/>
+          <ellipse cx="113" cy="38" rx="15" ry="7" fill="#C9668A" transform="rotate(15 113 38)"/></g>
+        <ellipse cx="62" cy="128" rx="12" ry="7" fill="#E8869F"/><ellipse cx="138" cy="128" rx="12" ry="7" fill="#E8869F"/>
+        ${p.face || ''}
+        ${p.front || ''}
+      </g>
+      <g class="g-fx">${p.fx || ''}</g>
+    </svg>`;
+  }
+
+  const lastPick = {};
+  function pick(list, key) {
+    let i = Math.floor(Math.random() * list.length);
+    if (list.length > 1 && i === lastPick[key]) i = (i + 1) % list.length;
+    lastPick[key] = i;
+    return list[i];
+  }
+  function showCheer(diff, force) {
+    const mood = diff === null ? 'first' : diff < 0 ? 'celebrate' : diff > 0 ? 'cheer' : 'steady';
+    const [title, text, pose] = force !== undefined ? CHEERS[mood][force] : pick(CHEERS[mood], mood);
+    $('cheerArt').innerHTML = gubbySVG(pose);
+    $('cheerTitle').textContent = title;
+    $('cheerText').textContent = text;
+    const pill = $('cheerDiff');
+    pill.hidden = diff === null;
+    if (diff !== null) {
+      pill.textContent = diff === 0 ? 'Same as your last entry' : `${diff > 0 ? '+' : '−'}${fmt(Math.abs(diff))} kg since your last entry`;
+      pill.className = diff < 0 ? 'pill' : 'pill neutral';
+    }
+    const c = $('cheer');
+    c.hidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => c.classList.add('on')));
+    setTimeout(() => $('cheerBtn').focus(), 50);
+  }
+  function hideCheer() {
+    const c = $('cheer');
+    c.classList.remove('on');
+    setTimeout(() => { c.hidden = true; $('cheerArt').textContent = ''; }, 260);
+  }
+  $('cheerBtn').addEventListener('click', hideCheer);
+  $('cheer').addEventListener('click', (e) => { if (e.target.id === 'cheer') hideCheer(); });
 
   // ---------- Range + list ----------
   $('seg').addEventListener('click', (e) => {
